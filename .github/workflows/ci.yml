@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  lockfile:
+    name: yarn.lock is up-to-date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node-yarn
+
+  lint:
+    name: Lint
+    needs: lockfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node-yarn
+      - name: Run ESLint
+        run: yarn lint
+
+  test:
+    name: Test
+    needs: lockfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node-yarn
+      - name: Run tests
+        run: yarn test
+
+  build:
+    name: Build
+    needs: lockfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node-yarn
+      - name: Run build
+        run: yarn build
